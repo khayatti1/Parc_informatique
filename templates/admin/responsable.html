@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des Responsables</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            font-size: 14px;
+            background-color: #ffffff;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .table th, .table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        .table th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+        .table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .table tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+        .table input[type="text"], 
+        .table input[type="date"], 
+        .table input[type="number"], 
+        .table textarea, 
+        .table select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        .table select {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+        }
+    </style>
+</head>
+<body>
+    <header class="mb-8 flex items-center justify-between md:mb-16 md:py-0 border-b-2 border-gray-500 md:px-8" style="height: 90px;">
+      <a href="/dashboard" >
+        <img src="/static/images/b.jpg" style="width: 260px; height: 88px; margin-left: -50px;">
+      </a>        
+      <nav class="hidden gap-12 lg:flex">
+      <a href="/admin" class="text-lg font-semibold text-gray-600 transition duration-100 hover:text-indigo-500 active:text-indigo-700">Inscription</a>
+      <a href="/liste_employe" class="text-lg font-semibold text-gray-600 transition duration-100 hover:text-indigo-500 active:text-indigo-700">Liste des Employes</a>
+      <a href="/liste_responsable"  class="text-lg font-semibold text-indigo-500">Liste des Responsables</a>
+
+    </nav>
+     <div class="relative inline-block text-left">
+         <div>
+           <button
+             type="button"
+             onclick="toggleMenu()"
+             class="text-lg font-semibold px-6 py-2 inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 flex items-center"
+             id="menu-button"
+             aria-expanded="false"
+             aria-haspopup="true"
+           >
+             Options
+             <svg
+               class="-mr-1 size-7 text-gray-400"
+               viewBox="0 0 20 20"
+               fill="currentColor"
+               aria-hidden="true"
+             >
+               <path
+                 fill-rule="evenodd"
+                 d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+                 clip-rule="evenodd"
+               />
+             </svg>
+           </button>
+         </div>
+         <div
+           id="menu"
+           class="hidden absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+           role="menu"
+           aria-orientation="vertical"
+           aria-labelledby="menu-button"
+           tabindex="-1"
+         >
+           <div class="py-1" role="none">
+             <a
+               href="/logout"
+               class="block px-4 py-2 text-sm text-gray-700"
+               role="menuitem"
+               tabindex="-1"
+               id="menu-item-1"
+               >Se Deconnecter</a
+             >
+           </div>
+         </div>
+       </div>
+       <script>
+         function toggleMenu() {
+           const menu = document.getElementById("menu");
+           menu.classList.toggle("hidden");
+         }
+ 
+         // Optionally, you can hide the menu when clicking outside of it
+         document.addEventListener("click", function (event) {
+           const menu = document.getElementById("menu");
+           const button = document.getElementById("menu-button");
+           if (!button.contains(event.target) && !menu.contains(event.target)) {
+             menu.classList.add("hidden");
+           }
+         });
+       </script>
+ </header>
+<div class="flex items-center justify-between flex-column flex-wrap md:flex-row space-y-4 md:space-y-0 pb-4 bg-white">
+  <div class="p-2">
+      <div id="dropdownAction" class="z-10 hidden bg-white divide-y  rounded-lg shadow w-44 :bg-gray-700 :divide-gray-600">
+          <div class="py-1">
+              <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 :hover:bg-gray-600 :text-gray-200 :hover:text-white">Delete User</a>
+          </div>
+      </div>
+  </div>
+  <label for="table-search" class="sr-only">Search</label>
+  <div class="relative p-2" style="margin-left: 120px; margin-top: -58px;">
+      <input type="text" id="table-search-users" style="margin-right: 180px; margin-top: 40px;" class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 :bg-gray-700 :border-gray-600 :placeholder-gray-400 :text-white :focus:ring-blue-500 :focus:border-blue-500" placeholder="Search for users">
+  </div>
+  <div class="container" style="margin-top: -60px;">
+    <h1 class="text-3xl font-bold text-center mb-8">Liste des Responsables</h1>
+    <div class="overflow-x-auto">
+        <table class="table-auto w-full bg-white shadow-md rounded my-6">
+            <thead>
+                <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                    <th class="py-3 px-6 text-left">Nom Complet</th>
+                    <th class="py-3 px-6 text-left">Matricule</th>
+                    <th class="py-3 px-6 text-left">Service</th>
+                    <th class="py-3 px-6 text-left">Bureau</th>
+
+                    <th class="py-3 px-6 text-left">Type d'utilisateur</th>
+                    <th scope="col" class="px-6 py-3 text-end sr-only">Action</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                {% for responsable in responsables %}
+                <tr class="border-b border-gray-200 hover:bg-gray-100">
+                    <td class="py-3 px-6 text-left">{{ responsable.name }}</td>
+                    <td class="py-3 px-6 text-left">{{ responsable.matricule }}</td>
+                    <td class="py-3 px-6 text-left">{{ responsable.service }}</td>
+                    <td class="py-3 px-6 text-left">{{ responsable.bureau }}</td>
+                    <td class="py-3 px-6 text-left">{{ responsable.type }}</td>
+                    <td class="px-6 py-4 text-right">
+                        <div class="flex justify-center items-center gap-2 h-full">
+                          <form action="/admin/deletee" method="post" data-message="User deleted">
+                              <input type="hidden" name="id" value="{{ responsable.id }}" />
+                              <button
+                                  type="submit"
+                                  class="font-semibold border px-4 py-1.5 duration-200 rounded-lg
+                                         {% if responsable.id in fiche_responsable_ids %}
+                                             bg-red-200 hover:bg-red-200 text-white border-red-200
+                                         {% else %}
+                                             bg-red-500 hover:bg-red-600 text-white border-red-500
+                                         {% endif %}"
+                                  {% if responsable.id in fiche_responsable_ids %}disabled{% endif %}
+                              >
+                                  Supprimer
+                              </button>
+                          </form>                                           
+                        </div>
+                      </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+  </div>
+</div>
+<script>
+  // Fonction pour gérer la recherche
+  function searchTable() {
+    // Récupérer la valeur de recherche
+    const searchText = document.getElementById('table-search-users').value.toLowerCase();
+
+    // Sélectionner les lignes du tableau
+    const rows = document.querySelectorAll('tbody tr');
+
+    // Parcourir chaque ligne
+    rows.forEach(row => {
+      // Sélectionner la colonne de nom complet (index 0)
+      const nameCol = row.querySelector('td:nth-child(1)');
+      // Récupérer le texte dans la colonne
+      const nameText = nameCol.textContent.toLowerCase();
+
+      // Vérifier si le texte de recherche est présent dans le nom complet
+      if (nameText.includes(searchText)) {
+        row.style.display = ''; // Afficher la ligne si correspondance
+      } else {
+        row.style.display = 'none'; // Cacher la ligne sinon
+      }
+    });
+  }
+
+  // Ajouter un événement de saisie pour déclencher la recherche
+  document.getElementById('table-search-users').addEventListener('input', searchTable);
+</script>
+
+</body>
+</html>

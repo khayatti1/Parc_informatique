@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+      integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <style>
+      body {
+        font-family: 'Roboto', sans-serif;
+      }
+      .bg-primary {
+        background-color: #4A90E2;
+      }
+      .text-primary {
+        color: #4A90E2;
+      }
+      .btn-primary {
+        background-color: #4A90E2;
+        color: #fff;
+        transition: background-color 0.3s ease;
+      }
+      .btn-primary:hover {
+        background-color: #357ABD;
+      }
+      .rounded-full {
+        border-radius: 50%;
+      }
+      .background-image {
+        background-image: url('/static/images/a.avif'); /* Remplacez par le chemin de votre image de fond */
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+      }
+    </style>
+  </head>
+<body>
+<script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+<section class="background-image min-h-screen flex items-center justify-center">
+  <div class="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center bg-opacity-80 backdrop-filter backdrop-blur-md">
+    <header class="mb-6">
+      <img src="/static/images/b.png" class="max-h-40 rounded-full">
+    </header>
+    <h1 class="text-2xl font-bold mb-6 text-gray-800 dark:text-white">Sign in to your account</h1>
+    <form class="space-y-4 w-full" action="/auth-callback" method="post">
+      <div>
+        <label for="type" class="block mb-2 text-sm font-medium text-gray-800 dark:text-white">Matricule Type</label>
+        <select name="type" id="type" class="bg-gray-200 border border-gray-300 text-gray-800 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+          <option value="admin">admin</option>
+          <option value="employe">employe</option>
+          <option value="responsable">responsable</option>
+          <!-- Add other types if necessary -->
+        </select>
+      </div>
+      <div>
+        <label for="matricule" class="block mb-2 text-sm font-medium text-gray-800 dark:text-white">Your Matricule</label>
+        <input type="text" name="matricule" id="matricule" class="bg-gray-200 border border-gray-300 text-gray-800 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Matricule" required="">
+      </div>
+      <div>
+        <label for="password" class="block mb-2 text-sm font-medium text-gray-800 dark:text-white">Password</label>
+        <input type="password" name="password" id="password" placeholder="••••••••" class="bg-gray-200 border border-gray-300 text-gray-800 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" required="">
+      </div>
+      <button class="w-full py-2.5 rounded-lg btn-primary">Log in</button>
+      <p class="text-center font-light text-gray-600 dark:text-gray-400">
+        <!-- Don’t have an account yet? <a href="/inscription" class="font-medium text-primary hover:underline">Inscription</a> -->
+      </p>
+    </form>
+  </div>
+
+</section>
+
+<script>
+  var notyf = new Notyf();
+
+  $("form").submit(function (event) {
+    event.preventDefault();
+    var serializedData = $(this).serialize();
+    request = $.ajax({
+      url: $(this).attr("action"),
+      type: $(this).attr("method"),
+      data: serializedData,
+      success: () => {
+        notyf.success('Logged In');
+        window.open('/check', '_current')
+      },
+      error: (e) => {
+        notyf.error(e.responseJSON.error);
+      },
+    });
+  });
+</script>
+</body>
+</html>

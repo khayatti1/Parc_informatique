@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fiche d'intervention sur matériel informatique</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section h2 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .table th, .table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .table th {
+            background-color: #f0f0f0;
+        }
+
+        .table input[type="text"], 
+        .table input[type="date"], 
+        .table input[type="number"], 
+        .table textarea, 
+        .table select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        .table select {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+        }
+    </style>
+</head>
+<body>
+    <header class="mb-8 flex items-center justify-between md:mb-16 md:py-0 border-b-2 border-gray-500 md:px-8" style="height: 90px;">
+        <img src="/static/images/b.png" style="width: 260px; height: 130px; margin-left: -50px;">
+        <nav class="hidden gap-12 lg:flex" style="margin-left: -100px;">
+            <a href="/employe" style="margin-left: -30px;" class="text-lg font-semibold text-indigo-500">Demande Intervention</a>
+            <a href="/intervention" style="margin-left: -30px;"class="text-lg font-semibold text-gray-600 transition duration-100 hover:text-indigo-500 active:text-indigo-700">Mes demandes</a>
+            <a href="/traitée" style="margin-left: -30px;"class="text-lg font-semibold text-gray-600 transition duration-100 hover:text-indigo-500 active:text-indigo-700">Traitées</a>
+
+        </nav>
+     <div class="relative inline-block text-left">
+         <div>
+           <button
+             type="button"
+             onclick="toggleMenu()"
+             class="text-lg font-semibold px-6 py-2 inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 flex items-center"
+             id="menu-button"
+             aria-expanded="false"
+             aria-haspopup="true"
+           >
+             Options
+             <svg
+               class="-mr-1 size-7 text-gray-400"
+               viewBox="0 0 20 20"
+               fill="currentColor"
+               aria-hidden="true"
+             >
+               <path
+                 fill-rule="evenodd"
+                 d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+                 clip-rule="evenodd"
+               />
+             </svg>
+           </button>
+         </div>
+         <div
+           id="menu"
+           class="hidden absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+           role="menu"
+           aria-orientation="vertical"
+           aria-labelledby="menu-button"
+           tabindex="-1"
+         >
+           <div class="py-1" role="none">
+             <a
+               href="/logout"
+               class="block px-4 py-2 text-sm text-gray-700"
+               role="menuitem"
+               tabindex="-1"
+               id="menu-item-1"
+               >Se Deconnecter</a
+             >
+           </div>
+         </div>
+       </div>
+       <script>
+         function toggleMenu() {
+           const menu = document.getElementById("menu");
+           menu.classList.toggle("hidden");
+         }
+         // Optionally, you can hide the menu when clicking outside of it
+         document.addEventListener("click", function (event) {
+           const menu = document.getElementById("menu");
+           const button = document.getElementById("menu-button");
+           if (!button.contains(event.target) && !menu.contains(event.target)) {
+             menu.classList.add("hidden");
+           }
+         });
+       </script>
+ </header>
+ <div class="container">
+    <div class="section">
+        <h2 class="text-2xl font-bold text-center mb-8 py-1" style="margin-top: -46px;">PARTIE A : SIGNALISATION (à remplir par L'Employée)</h2>
+        <form action="{{ url_for('create_fiche') }}" method="post">
+            <table class="table">
+                <!-- Type de matériel -->
+                <tr>
+                    <th>Type de matériel</th>
+                    <td>
+                        <select id="materielType" name="materielType" onchange="updateMaterielOptions()">
+                            <option value="">Sélectionner</option>
+                            <option value="ordinateur">Ordinateur</option>
+                            <option value="imprimante">Imprimante</option>
+                            <option value="clavier">Clavier</option>
+                            <option value="souris">Souris</option>
+                            <option value="ecran">Écran</option>
+                            <option value="scanner">Scanner</option>
+
+                        </select>
+                    </td>
+                </tr>
+                <!-- Sous-type de matériel -->
+                <tr>
+                    <th>Détails du matériel</th>
+                    <td>
+                        <select id="materielDetails" name="materielDetails" style="display:none;">
+                         
+                        </select>
+                    </td>
+                </tr>
+                <!-- Autres champs du formulaire -->
+                <tr>
+                    <th>Date</th>
+                    <td><input class="bg-gray-100" type="date" name="datetime" id="datetime" readonly></td>
+                </tr>
+                
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        // Récupérer la date actuelle au format YYYY-MM-DD
+                        let currentDate = new Date().toISOString().slice(0, 10);
+                        
+                        // Assigner la date actuelle comme valeur par défaut au champ 'datetime'
+                        document.getElementById('datetime').value = currentDate;
+                    });
+                </script>
+                
+                <tr>
+                    <th>Nom de l'utilisateur</th>
+                    <td><input class="bg-gray-100" type="text" name="nom_utilisateur" placeholder="Nom Utilisateur" value="{{user.name}}" readonly></td>
+                </tr>
+                <tr>
+                    <th>Service</th>
+                    <td><textarea class="bg-gray-100" type="text" name="service" name="interventions_demandees" placeholder="Interventions Demandées" readonly>{{user.service}}</textarea></td>
+                </tr>
+                <tr>
+                    <th>Bureau</th>
+                    <td><input class="bg-gray-100" type="text" name="bureau" value="{{user.bureau}}" readonly></td>
+                </tr>
+               
+                <tr>
+                    <th>Description de la panne</th>
+                    <td><textarea name="interventions_demandees" placeholder="Interventions Demandées" required></textarea></td>
+                </tr>  
+            </table>
+            <div style="margin-top: 20px; margin-left: 310px;">    
+                <button 
+                type="submit" 
+                class="font-semibold text-blue-500 bg-blue-500/100 hover:bg-blue-500 hover:text-white border border-blue-500 px-4 py-2 duration-200 rounded-lg"
+                onclick="initializeFormSubmission()">
+                Confirmer
+            </button>                                  
+            </div>           
+        </form>
+    </div>
+</div>
+<script>
+   function updateMaterielOptions() {
+            var service = document.getElementById('materielType').value;
+            var bureauSelect = document.getElementById('materielDetails');
+            var bureauOptions = {
+    "ordinateur": [
+        { value: 'HP', text: 'HP' },
+        { value: 'Dell', text: 'Dell ' },
+        { value: 'Lenovo', text: 'Lenovo' },
+        { value: 'Asus', text: 'Asus' },
+        { value: 'Acer', text: 'Acer' },
+    ],
+    "imprimante": [
+        { value: 'canon_pixma', text: 'Canon Pixma' },
+        { value: 'hp_officejet', text: 'HP OfficeJet' },
+        { value: 'brother_mfc', text: 'Brother MFC' },
+        { value: 'epson_ecotank', text: 'Epson EcoTank' },
+        { value: 'xerox_phaser', text: 'Xerox Phaser' },
+    ],
+    "clavier": [
+        { value: 'Logitech', text: 'Logitech' },
+        { value: 'razer_blackwidow', text: 'Razer' },
+        { value: 'Razer', text: 'Corsair ' },
+        { value: 'Microsoft', text: 'Microsoft ' },
+        { value: 'Dell', text: 'Dell' },
+    ],
+    "souris": [
+        { value: 'Logitech', text: 'Logitech' },
+        { value: 'Razer', text: 'Razer' },
+        { value: 'Corsair', text: 'Corsair' },
+        { value: 'microsoft_intellimouse', text: 'Microsoft' },
+        { value: 'apple', text: 'Apple' },
+    ],
+    "ecran": [
+        { value: 'Samsung', text: 'Samsung' },
+        { value: 'Dell', text: 'Dell' },
+        { value: 'LG', text: 'LG' },
+        { value: 'Asus', text: 'Asus' },
+        { value: 'BenQ', text: 'BenQ' },
+    ],
+    "scanner": [
+        { value: 'HP_ScanJet', text: 'HP ScanJet' },
+        { value: 'canon_lide', text: 'Canon LiDE' },
+        { value: 'epson_perfection', text: 'Epson Perfection' },
+        { value: 'brother_ads', text: 'Brother ADS' },
+        { value: 'xerox_documate', text: 'Xerox DocuMate' },
+    ]
+};
+
+            // Supprime toutes les options existantes
+            bureauSelect.innerHTML = '';
+
+            // Ajoute les nouvelles options
+            if (bureauOptions[service]) {
+                bureauOptions[service].forEach(function(option) {
+                    var newOption = document.createElement('option');
+                    newOption.value = option.value;
+                    newOption.text = option.text;
+                    bureauSelect.appendChild(newOption);
+                });
+                bureauSelect.style.display = 'block';
+            } else {
+                bureauSelect.style.display = 'none';
+            }
+        }
+    function initializeFormSubmission() {
+    document.getElementById('createFicheForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Empêcher le comportement par défaut du formulaire
+
+        // Récupérer les données du formulaire
+        var formData = new FormData(this);
+
+        // Envoyer les données au serveur
+        fetch('/create_fiche', {
+            method: 'POST',
+            body: formData,
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Traiter la réponse du serveur
+            if (data.success) {
+                alert('Fiche créée avec succès!');
+                // Rediriger ou rafraîchir la page si nécessaire
+                window.location.href = '/all_fiches';
+            } else {
+                alert('Une erreur est survenue lors de la création de la fiche.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Une erreur est survenue. Veuillez réessayer plus tard.');
+        });
+    });
+}
+
+// Appeler la fonction lorsque le DOM est complètement chargé
+document.addEventListener('DOMContentLoaded', initializeFormSubmission);
+</script>
+</body>
+</html>

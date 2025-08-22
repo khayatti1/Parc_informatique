@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fiche d'intervention sur matériel informatique</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section h2 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .table th, .table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .table th {
+            background-color: #f0f0f0;
+        }
+
+        .table input[type="text"], 
+        .table input[type="date"], 
+        .table input[type="number"], 
+        .table textarea, 
+        .table select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        .table select {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+        }
+        .qr-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .qr-container img {
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+  <header class="mb-8 flex items-center justify-between md:mb-16 md:py-0 border-b-2 border-gray-500 md:px-8" style="height: 90px;">
+    <img src="/static/images/b.png" style="width: 260px; height: 130px; margin-left: -50px;">
+    <nav class="hidden gap-12 lg:flex" style="margin-left: -100px;">
+       <a href="/employe"  style="margin-left: -30px;" class="text-lg font-semibold text-gray-600 transition duration-100 hover:text-indigo-500 active:text-indigo-700">Demande Intervention</a>
+       <a href="/intervention" style="margin-left: -30px;" class="text-lg font-semibold text-gray-600 transition duration-100 hover:text-indigo-500 active:text-indigo-700">Mes demandes</a>
+       <a href="/traitée" style="margin-left: -30px;" class="text-lg font-semibold text-indigo-500">Traitées</a>
+      </nav>
+ <div class="relative inline-block text-left">
+     <div>
+       <button
+         type="button"
+         onclick="toggleMenu()"
+         class="text-lg font-semibold px-6 py-2 inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 flex items-center"
+         id="menu-button"
+         aria-expanded="false"
+         aria-haspopup="true"
+       >
+         Options
+         <svg
+           class="-mr-1 size-7 text-gray-400"
+           viewBox="0 0 20 20"
+           fill="currentColor"
+           aria-hidden="true"
+         >
+           <path
+             fill-rule="evenodd"
+             d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+             clip-rule="evenodd"
+           />
+         </svg>
+       </button>
+     </div>
+     <div
+       id="menu"
+       class="hidden absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+       role="menu"
+       aria-orientation="vertical"
+       aria-labelledby="menu-button"
+       tabindex="-1"
+     >
+       <div class="py-1" role="none">
+         <a
+           href="/logout"
+           class="block px-4 py-2 text-sm text-gray-700"
+           role="menuitem"
+           tabindex="-1"
+           id="menu-item-1"
+           >Se Deconnecter</a
+         >
+       </div>
+     </div>
+   </div>
+   <script>
+     function toggleMenu() {
+       const menu = document.getElementById("menu");
+       menu.classList.toggle("hidden");
+     }
+
+     // Optionally, you can hide the menu when clicking outside of it
+     document.addEventListener("click", function (event) {
+       const menu = document.getElementById("menu");
+       const button = document.getElementById("menu-button");
+       if (!button.contains(event.target) && !menu.contains(event.target)) {
+         menu.classList.add("hidden");
+       }
+     });
+   </script>
+</header>
+
+<div class="flex items-center justify-between flex-column flex-wrap md:flex-row space-y-4 md:space-y-0 pb-4 bg-white">
+  <div class="p-2">
+      <div id="dropdownAction" class="z-10 hidden bg-white divide-y  rounded-lg shadow w-44 :bg-gray-700 :divide-gray-600">
+          <div class="py-1">
+              <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 :hover:bg-gray-600 :text-gray-200 :hover:text-white">Delete User</a>
+          </div>
+      </div>
+  </div>
+  <label for="table-search" class="sr-only">Recherche</label>
+  <div class="relative p-2" style="margin-left: 120px; margin-top: -70px;">
+      <input type="text" id="table-search-users" style="margin-right: 22px; margin-top: 40px; width: 122px;" class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 :bg-gray-700 :border-gray-600 :placeholder-gray-400 :text-white :focus:ring-blue-500 :focus:border-blue-500" placeholder="Search Fiche ID">
+  </div>
+</div>
+
+ <div class="bg-white sm:py-0 lg:py-0" style="margin-top: -60px;">
+  <div class="mx-auto max-w-screen-lg px-4 md:px-8">
+    <h2 class="mb-4 text-center text-2xl font-bold text-gray-800 md:mb-6 lg:text-3xl">La Liste des fiches d'interventions (Traitée)</h2>
+    {% if fiches %}
+      {% for fiche in fiches %}
+        <div class="py-5 sm:py-8 border-t">
+          <div class="flex flex-wrap gap-4 sm:py-2.5 lg:gap-6 pt-8">
+            <div class="sm:-my-2.5">
+              <div class="qr-container">
+                <a href="#" class="group relative block h-40 w-24 overflow-hidden rounded-lg bg-gray-100 sm:h-50 sm:w-40">
+                  <img src="{{ url_for('generate_qr', fiche_id=fiche.id) }}" alt="QR Code" loading="lazy" class="h-full w-full object-cover object-center transition group-hover:scale-110">
+                </a>
+              </div>
+            </div>
+            <div class="flex flex-1 flex-col justify-between">
+              <div>
+                <a href="#" class="mb-1 inline-block text-lg font-bold text-gray-800 transition duration-100 hover:text-gray-500 lg:text-xl">
+                  <strong>Fiche ID:</strong> {{ fiche.id }}<br>
+                </a>
+                <span class="block text-gray-500"><strong>Date:</strong> {{ fiche.datetime }}</span>
+                <span class="block text-gray-500"><strong>Type de matériel:</strong> {{ fiche.materielType }}</span>
+                <span class="block text-gray-500"><strong>Détails:</strong> {{ fiche.materielDetails }}</span>
+                <span class="block text-gray-500"><strong>Interventions demandées:</strong> {{ fiche.interventions_demandees }}</span>
+              </div>
+              <div>
+                {% if fiche.etat %}
+                  <span class="mb-0 block font-bold text-green-500 md:text-lg py-2">Clôturée</span>
+                {% else %}
+                  <span class="mb-0 block font-bold text-red-500 md:text-lg py-2">En Attente</span>
+                {% endif %}
+              </div>
+            </div>
+            <div class="flex w-full justify-between border-t pt-1 sm:w-auto sm:border-none sm:pt-8">
+              <a href="{{ url_for('details', fiche_id=fiche.id) }}">
+                <button class="select-none text-sm font-bold text-indigo-500 transition duration-100 hover:text-indigo-600 active:text-indigo-700">
+                  Détails
+                </button>
+              </a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+    <p class="text-center text-gray-500 mt-4 text-2xl">Aucune fiche trouvée.</p>
+    {% endif %}
+  </div>
+</div>
+
+
+
+<script>
+     function printPage() {
+    // Sélectionnez le formulaire à imprimer
+    var form = document.querySelector('.container .section form');
+
+    // Créez une nouvelle fenêtre pour l'impression
+    var printWindow = window.open('', '', 'height=600,width=800');
+
+    // Ajoutez le contenu du formulaire à la nouvelle fenêtre
+    printWindow.document.write('<html><head><title>Impression du Formulaire</title>');
+    printWindow.document.write('<style>');
+    printWindow.document.write('body { font-family: Arial, sans-serif; font-size: 14px; line-height: 1.5; }');
+    printWindow.document.write('.container { max-width: 800px; margin: auto; padding: 20px; }');
+    printWindow.document.write('.section { margin-bottom: 40px; }');
+    printWindow.document.write('.section h2 { font-size: 1.5rem; font-weight: bold; color: #333; margin-bottom: 10px; }');
+    printWindow.document.write('.table { width: 100%; border-collapse: collapse; margin-top: 10px; }');
+    printWindow.document.write('.table th, .table td { border: 1px solid #ddd; padding: 8px; text-align: left; }');
+    printWindow.document.write('.table th { background-color: #f0f0f0; }');
+    printWindow.document.write('.table input[type="text"], .table input[type="date"], .table input[type="number"], .table textarea, .table select { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 14px; }');
+    printWindow.document.write('.table select { appearance: none; -webkit-appearance: none; -moz-appearance: none; }');
+    printWindow.document.write('</style>');
+    printWindow.document.write('</head><body>');
+    printWindow.document.write('<h2>Formulaire à Imprimer</h2>');
+    printWindow.document.write(form.outerHTML);
+    printWindow.document.write('</body></html>');
+
+    // Fermez le document pour compléter l'écriture
+    printWindow.document.close();
+
+    // Attendez que le contenu soit chargé, puis imprimez et fermez la fenêtre
+    printWindow.onload = function() {
+    printWindow.print();
+    printWindow.close();
+    };
+ 
+        // Add header
+    printWindow.document.write('<header class="header">');
+    printWindow.document.write('<img src="/static/images/b.png" style="width: 260px; height: 120px; margin-left: -50px;">');
+    printWindow.document.write('<nav class="nav"></nav>'); // Empty nav for simplicity
+    printWindow.document.write('</header>');
+    
+        // Add form content
+    printWindow.document.write(formClone.outerHTML);
+    printWindow.document.write('</body></html>');
+    
+        // Fermez le document pour compléter l'écriture
+    printWindow.document.close();
+    
+        // Attendez que le contenu soit chargé, puis imprimez et fermez la fenêtre
+        printWindow.onload = function() {
+        printWindow.print();
+        printWindow.close();
+        };
+    }
+    
+    
+    document.addEventListener('DOMContentLoaded', function() {
+  const searchInput = document.getElementById('table-search-users');
+  const fiches = document.querySelectorAll('.py-5'); // Sélecteur pour chaque fiche
+
+  searchInput.addEventListener('input', function() {
+    const searchTerm = searchInput.value.toLowerCase();
+
+    fiches.forEach(fiche => {
+      const ficheId = fiche.querySelector('a strong').nextSibling.nodeValue.trim();
+      const materielType = fiche.querySelector('span').nextSibling.nodeValue.trim();
+      
+      // Vérifier si l'ID ou le type de matériel correspond à la recherche
+      if (ficheId.toLowerCase().includes(searchTerm) || materielType.toLowerCase().includes(searchTerm)) {
+        fiche.style.display = ''; // Afficher l'élément
+      } else {
+        fiche.style.display = 'none'; // Masquer l'élément
+      }
+    });
+  });
+});
+  </script>
+
+</body>
+</html>

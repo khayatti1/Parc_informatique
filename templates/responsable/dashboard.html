@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Responsable</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 150px;
+            margin-top: 50px;
+            margin-left: -10px;
+
+        }
+        .circle {
+            position: relative;
+            width: 300px;
+            height: 400px;
+            margin: 1px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .circle h2 {
+            margin: 0;
+            padding: 10px;
+            font-size: 1.5rem;
+        }
+        .circle canvas {
+            width: 100% !important;
+            height: auto !important;
+        }
+        .info {
+            margin-top: 10px;
+            text-align: center;
+        }
+        .info p {
+            margin: 5px 0;
+        }
+        .legend {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 5px 10px;
+        }
+        .legend-color {
+            width: 15px;
+            height: 15px;
+            margin-right: 5px;
+            border-radius: 50%;
+        }
+        .circle.empty {
+            color: #1162a9;
+        }
+    </style>   
+</head>
+<body>
+    <header class="mb-8 flex items-center justify-between md:mb-16 md:py-0 border-b-2 border-gray-500 md:px-8" style="height: 90px;">
+        <a href="/dashboardd">
+            <img src="/static/images/b.jpg" style="width: 260px; height: 88px; margin-left: -50px;">
+        </a>
+        <nav class="hidden gap-12 lg:flex"style="margin-left: -100px;">
+            <!-- <a href="/inttervention" class="text-lg font-semibold text-indigo-500"> Mes Intervention</a> -->
+            <a href="/responsable" class="text-lg font-semibold text-gray-600 transition duration-100 hover:text-indigo-500 active:text-indigo-700">Les demandes</a>
+            <a href="/inttervention" style="margin-left: -30px;"class="text-lg font-semibold text-gray-600 transition duration-100 hover:text-indigo-500 active:text-indigo-700"> Mes Intervention</a>
+        </nav>
+        <div class="relative inline-block text-left">
+            <div>
+                <button
+                    type="button"
+                    onclick="toggleMenu()"
+                    class="text-lg font-semibold px-6 py-2 inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 flex items-center"
+                    id="menu-button"
+                    aria-expanded="false"
+                    aria-haspopup="true"
+                >
+                    Options
+                    <svg
+                        class="-mr-1 size-7 text-gray-400"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                        aria-hidden="true"
+                    >
+                        <path
+                            fill-rule="evenodd"
+                            d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+                            clip-rule="evenodd"
+                        />
+                    </svg>
+                </button>
+            </div>
+            <div
+                id="menu"
+                class="hidden absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                role="menu"
+                aria-orientation="vertical"
+                aria-labelledby="menu-button"
+                tabindex="-1"
+            >
+                <div class="py-1" role="none">
+                    <a
+                        href="/logout"
+                        class="block px-4 py-2 text-sm text-gray-700"
+                        role="menuitem"
+                        tabindex="-1"
+                        id="menu-item-1"
+                    >Se Deconnecter</a>
+                </div>
+            </div>
+        </div>
+        <script>
+            function toggleMenu() {
+                const menu = document.getElementById("menu");
+                menu.classList.toggle("hidden");
+            }
+
+            document.addEventListener("click", function (event) {
+                const menu = document.getElementById("menu");
+                const button = document.getElementById("menu-button");
+                if (!button.contains(event.target) && !menu.contains(event.target)) {
+                    menu.classList.add("hidden");
+                }
+            });
+        </script>
+    </header>
+    
+    <div class="container">
+        <!-- Circle Fiches -->
+        <div class="circle">
+            <h2>Fiches d'Intervention</h2>
+            <canvas id="fichesChart"></canvas>
+            <div class="info">
+                <!-- <p>Total : {{ total_fiches }}</p> -->
+                <p>En Attente : {{ fiches_false }}</p>
+                <p>Validées : {{ fiches_true }}</p>
+            </div>
+        </div>
+
+        <!-- Circle Types de Matériel -->
+        <div class="circle">
+            <h2>Types de Matériel</h2>
+            <canvas id="materialChart"></canvas>
+            <div class="info">
+                <p>Total : {{ total_fiches }}</p>
+                <div class="legend" id="materialLegend"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#FF9F40', '#9966FF', '#C9CBCF'];
+
+        function renderChart(id, labels, data, colors) {
+            new Chart(document.getElementById(id), {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: colors
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    let value = context.raw || 0;
+                                    return `${label}: ${value}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        renderChart('fichesChart', ['En Attente', 'Validées'], [{{ fiches_false }}, {{ fiches_true }}], [ '#f38b7b','#548de4']);
+        
+        const materialLabels = [{% for material in total_parc.keys() %}'{{ material }}'{% if not loop.last %}, {% endif %}{% endfor %}];
+        const materialData = [{% for count in total_parc.values() %}{{ count }}{% if not loop.last %}, {% endif %}{% endfor %}];
+        renderChart('materialChart', materialLabels, materialData, colors.slice(0, materialLabels.length));
+
+        const materialLegend = document.getElementById('materialLegend');
+        materialLabels.forEach((label, index) => {
+            const item = document.createElement('div');
+            item.className = 'legend-item';
+            item.innerHTML = `<div class="legend-color" style="background-color: ${colors[index]}"></div>${label} : ${materialData[index]}`;
+            materialLegend.appendChild(item);
+        });
+    </script>
+</body>
+</html>
